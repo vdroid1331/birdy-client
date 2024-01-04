@@ -9,12 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.1",
+    "graphql": "^16.8.1",
+    "graphql-request": "^6.1.0",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
-    "react-icons": "^4.12.0"
+    "react-icons": "^4.12.0",
+    "string-width": "^7.0.0",
+    "strip-ansi": "^7.1.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
