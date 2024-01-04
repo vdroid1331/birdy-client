@@ -5,6 +5,9 @@ import { SlOptions } from "react-icons/sl";
 import { ReactNode, useCallback } from "react";
 import FeedCard from "@/components/FeedCard";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import toast from "react-hot-toast";
+import { graphqlClient } from "@/clients/api";
+import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
 
 interface TwitterSidebarButton {
   title: string;
@@ -47,8 +50,24 @@ const sidebarMenuItems: TwitterSidebarButton[] = [
 ];
 
 export default function Home() {
-  const handleLoginWithGoogle = useCallback((cred: CredentialResponse) => {},
-  []);
+  const handleLoginWithGoogle = useCallback(
+    async (cred: CredentialResponse) => {
+      const googleToken = cred.credential;
+      if (!googleToken) {
+        return toast.error(`Google Token not Found`);
+      }
+      const { verifyGoogleToken } = await graphqlClient.request(
+        verifyUserGoogleTokenQuery,
+        { token: googleToken }
+      );
+
+      toast.success("Verified Success");
+      console.log(verifyGoogleToken);
+      if (verifyGoogleToken)
+        window.localStorage.setItem("__birdy_token", verifyGoogleToken);
+    },
+    []
+  );
 
   return (
     <div>
@@ -86,7 +105,7 @@ export default function Home() {
         <div className="col-span-3">
           <div className="p-5 bg-slate-700 rounded-lg">
             <h1 className="my-2 text-2xl">New to Birdy?</h1>
-            <GoogleLogin onSuccess={(cred) => console.log(cred)} />
+            <GoogleLogin onSuccess={handleLoginWithGoogle} />
           </div>
         </div>
       </div>
