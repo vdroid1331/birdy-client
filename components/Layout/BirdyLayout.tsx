@@ -1,4 +1,4 @@
-import React, { ReactNode, useState, useCallback } from "react";
+import React, { ReactNode, useState, useCallback, useMemo } from "react";
 import Image from "next/image";
 import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
 import {
@@ -17,6 +17,7 @@ import { graphqlClient } from "@/clients/api";
 import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 
 interface BirdyLayoutProps {
   children: ReactNode;
@@ -25,46 +26,93 @@ interface BirdyLayoutProps {
 interface BirdySidebarButton {
   title: string;
   icon: ReactNode;
+  link: string;
 }
 
-const sidebarMenuItems: BirdySidebarButton[] = [
-  {
-    title: "Home",
-    icon: <BiHomeCircle />,
-  },
-  {
-    title: "Explore",
-    icon: <BiHash />,
-  },
-  {
-    title: "Notifications",
-    icon: <BsBell />,
-  },
-  {
-    title: "Messages",
-    icon: <BsEnvelope />,
-  },
-  {
-    title: "Bookmarks",
-    icon: <BsBookmark />,
-  },
-  {
-    title: "Birdy Blue",
-    icon: <BiMoney />,
-  },
-  {
-    title: "Profile",
-    icon: <BiUser />,
-  },
-  {
-    title: "More Options",
-    icon: <SlOptions />,
-  },
-];
+// const sidebarMenuItems: BirdySidebarButton[] = [
+//   {
+//     title: "Home",
+//     icon: <BiHomeCircle />,
+//   },
+//   {
+//     title: "Explore",
+//     icon: <BiHash />,
+//   },
+//   {
+//     title: "Notifications",
+//     icon: <BsBell />,
+//   },
+//   {
+//     title: "Messages",
+//     icon: <BsEnvelope />,
+//   },
+//   {
+//     title: "Bookmarks",
+//     icon: <BsBookmark />,
+//   },
+//   {
+//     title: "Birdy Blue",
+//     icon: <BiMoney />,
+//   },
+//   {
+//     title: "Profile",
+//     icon: <BiUser />,
+//   },
+//   {
+//     title: "More Options",
+//     icon: <SlOptions />,
+//   },
+// ];
 
 const BirdyLayout: React.FC<BirdyLayoutProps> = (props) => {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
+
+  const sidebarMenuItems: BirdySidebarButton[] = useMemo(() => {
+    return [
+      {
+        title: "Home",
+        icon: <BiHomeCircle />,
+        link: "/",
+      },
+      {
+        title: "Explore",
+        icon: <BiHash />,
+        link: "/",
+      },
+      {
+        title: "Notifications",
+        icon: <BsBell />,
+        link: "/",
+      },
+      {
+        title: "Messages",
+        icon: <BsEnvelope />,
+        link: "/",
+      },
+      {
+        title: "Bookmarks",
+        icon: <BsBookmark />,
+        link: "/",
+      },
+      {
+        title: "Birdy Blue",
+        icon: <BiMoney />,
+        link: "/",
+      },
+      {
+        title: "Profile",
+        icon: <BiUser />,
+        link: `/user/${user?.id}`,
+      },
+      {
+        title: "More Options",
+        icon: <SlOptions />,
+        link: "/",
+      },
+    ];
+  }, [user?.id]);
+
   const handleLoginWithGoogle = useCallback(
     async (cred: CredentialResponse) => {
       const googleToken = cred.credential;
@@ -97,11 +145,16 @@ const BirdyLayout: React.FC<BirdyLayoutProps> = (props) => {
               <ul>
                 {sidebarMenuItems.map((item) => (
                   <li
-                    className="flex justify-start items-center gap-4 hover:bg-gray-800 rounded-full px-3 py-3 w-fit cursor-pointer mt-2"
+                    // className="flex justify-start items-center gap-4 hover:bg-gray-800 rounded-full px-3 py-3 w-fit cursor-pointer mt-2"
                     key={item.title}
                   >
-                    <span className="text-3xl">{item.icon}</span>
-                    <span className="hidden sm:inline">{item.title}</span>
+                    <Link
+                      href={item.link}
+                      className="flex justify-start items-center gap-4 hover:bg-gray-800 rounded-full px-3 py-3 w-fit cursor-pointer mt-2"
+                    >
+                      <span className="text-3xl">{item.icon}</span>
+                      <span className="hidden sm:inline">{item.title}</span>
+                    </Link>
                   </li>
                 ))}
               </ul>
