@@ -10,15 +10,15 @@ const inter = Inter({ subsets: ["latin"] });
 
 const queryClient = new QueryClient();
 
-const GOOGLE_OAUTH_CLIENT_ID: string =
-  process.env.NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID || "";
+const GOOGLE_OAUTH_CLIENT_ID: string = process.env
+  .NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID as string;
 
 export default function App({ Component, pageProps }: AppProps) {
   // console.log(process.env.NODE_ENV);
   return (
     <div className={inter.className}>
       <QueryClientProvider client={queryClient}>
-        <GoogleOAuthProvider clientId={GOOGLE_OAUTH_CLIENT_ID || ""}>
+        <GoogleOAuthProvider clientId={GOOGLE_OAUTH_CLIENT_ID}>
           <Component {...pageProps} />
           <Toaster />
           <ReactQueryDevtools />
