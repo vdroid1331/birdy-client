@@ -133,6 +133,7 @@ const BirdyLayout: React.FC<BirdyLayoutProps> = (props) => {
     },
     [queryClient]
   );
+  // console.log(user?.recommendedUsers);
   return (
     <div>
       <div className="grid grid-cols-12 h-screen w-screen sm:px-56">
@@ -180,6 +181,7 @@ const BirdyLayout: React.FC<BirdyLayoutProps> = (props) => {
                   src={user?.profileImageURL}
                 />
               )}
+
               <div className="hidden sm:block">
                 <h3 className="text-xl">
                   {user.firstName} {user.lastName}
@@ -192,10 +194,38 @@ const BirdyLayout: React.FC<BirdyLayoutProps> = (props) => {
           {props.children}
         </div>
         <div className="col-span-0 sm:col-span-3 p-5">
-          {!user && (
+          {!user ? (
             <div className="p-5 bg-slate-700 rounded-lg">
               <h1 className="my-2 text-2xl">New to Birdy?</h1>
               <GoogleLogin onSuccess={handleLoginWithGoogle} />
+            </div>
+          ) : (
+            <div className="px-4 py-3 bg-slate-800 rounded-lg">
+              <h1 className="my-2 text-2xl mb-5">Users you may know</h1>
+              {user?.recommendedUsers?.map((el) => (
+                <div className="flex items-center gap-3 mt-2" key={el?.id}>
+                  {el?.profileImageURL && (
+                    <Image
+                      src={el?.profileImageURL}
+                      className="rounded-full"
+                      alt="user-image"
+                      width={60}
+                      height={60}
+                    />
+                  )}
+                  <div className="text-lg">
+                    <div>
+                      {el?.firstName} {el?.lastName}
+                    </div>
+                    <Link
+                      href={`/user/${el?.id}`}
+                      className="bg-white text-black text-sm px-5 py-1 w-full rounded-lg"
+                    >
+                      View
+                    </Link>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
