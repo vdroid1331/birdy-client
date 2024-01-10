@@ -9,6 +9,8 @@ import BirdyLayout from "@/components/Layout/BirdyLayout";
 import { graphqlClient } from "@/clients/api";
 import { getAllTweetsQuery } from "@/graphql/query/tweet";
 import { GetServerSideProps } from "next";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 interface HomeProps {
   tweets?: Tweet[];
@@ -19,21 +21,63 @@ export default function Home(props: HomeProps) {
   // const { tweets = [] } = useGetAllTweets();
 
   const [content, setContent] = useState("");
+  const [imageURL, setImageURL] = useState("");
 
   const { mutate } = useCreateTweet();
 
+  const handleInputChangeFile = useCallback(
+    (input: HTMLInputElement) => {
+      return async (event: Event) => {
+        event.preventDefault();
+        console.log(input.files);
+        const file: File | null | undefined = input.files?.[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("chirpImage", file);
+        try {
+          toast.loading("Uploading file...", { id: "2" });
+          const response = await axios.post(
+            "http://localhost:8000/api/uploadFile",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+          console.log("File uploaded successfully:", response.data.data.url);
+          const image_url = response.data.data.url;
+          setImageURL(image_url);
+          console.log("Image URL is :", image_url);
+          toast.success("File uploaded successfully", { id: "2" });
+          console.log(imageURL);
+        } catch (error) {
+          console.error("Error uploading file:", error);
+        }
+      };
+    },
+    [imageURL]
+  );
+
   const handleSelectImage = useCallback(() => {
+    if (!user) return;
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
+
+    const handlerFn = handleInputChangeFile(input);
+
+    input.addEventListener("change", handlerFn);
     input.click();
-  }, []);
+  }, [handleInputChangeFile, user]);
 
   const handleCreateTweet = useCallback(() => {
     mutate({
       content,
+      imageURL,
     });
-  }, [content, mutate]);
+    setImageURL("");
+  }, [content, imageURL, mutate]);
 
   return (
     <div>
@@ -60,6 +104,14 @@ export default function Home(props: HomeProps) {
                   rows={3}
                   placeholder="What's happening?"
                 ></textarea>
+                {imageURL && (
+                  <Image
+                    src={imageURL}
+                    alt="tweet-img"
+                    width={300}
+                    height={300}
+                  />
+                )}
                 <div className="mt-2  flex justify-between items-center">
                   <BiImageAlt onClick={handleSelectImage} className="text-xl" />
                   <button
