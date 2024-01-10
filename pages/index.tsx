@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { BiImageAlt } from "react-icons/bi";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FeedCard from "@/components/FeedCard";
 import { useCurrentUser } from "@/hooks/user";
 import { useCreateTweet, useGetAllTweets } from "@/hooks/tweet";
@@ -18,12 +18,12 @@ interface HomeProps {
 
 export default function Home(props: HomeProps) {
   const { user } = useCurrentUser();
-  // const { tweets = [] } = useGetAllTweets();
+  const { tweets = props.tweets as Tweet[] } = useGetAllTweets();
 
   const [content, setContent] = useState("");
   const [imageURL, setImageURL] = useState("");
 
-  const { mutate } = useCreateTweet();
+  const { mutateAsync } = useCreateTweet();
 
   const handleInputChangeFile = useCallback(
     (input: HTMLInputElement) => {
@@ -71,13 +71,14 @@ export default function Home(props: HomeProps) {
     input.click();
   }, [handleInputChangeFile, user]);
 
-  const handleCreateTweet = useCallback(() => {
-    mutate({
+  const handleCreateTweet = useCallback(async () => {
+    await mutateAsync({
       content,
       imageURL,
     });
     setImageURL("");
-  }, [content, imageURL, mutate]);
+    setContent("");
+  }, [content, imageURL, mutateAsync]);
 
   return (
     <div>
@@ -125,7 +126,7 @@ export default function Home(props: HomeProps) {
             </div>
           </div>
         </div>
-        {props.tweets?.map((tweet) =>
+        {tweets?.map((tweet) =>
           tweet ? <FeedCard key={tweet?.id} data={tweet as Tweet} /> : null
         )}
       </BirdyLayout>
