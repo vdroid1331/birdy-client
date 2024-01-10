@@ -11,6 +11,7 @@ import { getAllTweetsQuery } from "@/graphql/query/tweet";
 import { GetServerSideProps } from "next";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { API_ENDPOINTS } from "@/utils/constants";
 
 interface HomeProps {
   tweets?: Tweet[];
@@ -37,7 +38,7 @@ export default function Home(props: HomeProps) {
         try {
           toast.loading("Uploading file...", { id: "2" });
           const response = await axios.post(
-            "http://localhost:8000/api/uploadFile",
+            API_ENDPOINTS.fileUploadEndpoint,
             formData,
             {
               headers: {
