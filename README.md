@@ -1,20 +1,26 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+### BIRDY
+
+Birdy is a Twitter like app, and this repository (Birdy Client) contains the frontend code for birdy.
+Birdy Client is built on:
+- NextJS and React for UI
+- Tailwind CSS and some custom styles for styling
+- Codegen for typesafe GraphQL queries and mutations
+- Graphql-Request as API client for client-server communication to consume GraphQL APIs
+- React-Query for client-side data caching and query caching
+- Typescript to maintain code quality and write type-safe code
+- axios to consume REST API for image upload to cloudinary
+
 
 ## Getting Started
 
-First, run the development server:
+- First, clone this repository
+- make sure Node.js and NPM is installed.
+- install yarn using the command `npm install --global yarn`
+- install dependencies using `yarn install`
+- add a .env.local file and add the environment variables for Google oauth client id and the backend url for APIs (Check .env.sample for reference).
+- run the sever using yarn dev.
+- Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
